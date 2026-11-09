@@ -79,7 +79,7 @@ Some rules are still being decided, so they may change:
 | [Usman Nadeem](https://github.com/Usmannadeemm) | Savings and current accounts |
 | [Usama Ahsan](https://github.com/usamajutt05555-sketch) | Customer class and CNIC validation |
 | [Hassan Abdullah](https://github.com/hassanasif78223-ux) | Customer manager |
-| Muhammad Abubakar | Transactions and money functions |
+| [Muhammad Abubakar](https://github.com/Malikabubakar8) | Transactions and money functions |
 | [Abdulrehman](https://github.com/ARawan007) | User class, login, password hashing |
 | [Muhammad Faizan](https://github.com/Faizan-lab856) | User store and permissions |
 | [Syed Faizan Haider](https://github.com/haiderig1214-eng) | File storage |
