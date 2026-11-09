@@ -74,13 +74,13 @@ Some rules are still being decided, so they may change:
 
 | Member | Area | Contribution
 |---|---|---|
-| [Saad Bin Asad](https://github.com/saadb-asad) (Group Leader) | Integration and main menu |
+| [Saad Bin Asad](https://github.com/saadb-asad) (Team Lead) | Integration and main menu |
 | [Mauz Ahmed Ghumman](https://github.com/mauzghumman-lab) | Base Account class |
 | [Usman Nadeem](https://github.com/Usmannadeemm) | Savings and current accounts |
 | [Usama Ahsan](https://github.com/usamajutt05555-sketch) | Customer class and CNIC validation |
-| Hassan Abdullah | Customer manager |
+| [Hassan Abdullah](https://github.com/hassanasif78223-ux) | Customer manager |
 | Muhammad Abubakar | Transactions and money functions |
-| Abdulrehman | User class, login, password hashing |
+| [Abdulrehman](https://github.com/ARawan007) | User class, login, password hashing |
 | [Muhammad Faizan](https://github.com/Faizan-lab856) | User store and permissions |
 | [Syed Faizan Haider](https://github.com/haiderig1214-eng) | File storage |
 | [Farhan Abbass](https://github.com/farhan4t6) | Zakat calculation |
