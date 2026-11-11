@@ -8,26 +8,25 @@ const int MAX_CUSTOMERS = 100;
 const int MAX_ACCOUNTS = 100;
 const int MAX_TRANSACTIONS = 500;
 const int MAX_USERS = 20;
+const int MAX_LOGIN_TRIES = 3;
 
 const int NAME_SIZE = 50;
 const int CNIC_SIZE = 16;
 const int PHONE_SIZE = 20;
 const int ADDRESS_SIZE = 60;
-const int CNIC_LENGTH = 15;
-const int CNIC_FIRST_DASH = 5;
-const int CNIC_SECOND_DASH = 13;
-
 const int TYPE_SIZE = 12;
 const int USERNAME_SIZE = 30;
 const int PASSWORD_SIZE = 30;
 const int ROLE_SIZE = 10;
-const int ACTION_SIZE = 20;
+
+const int CNIC_LENGTH = 15;
+const int CNIC_FIRST_DASH = 5;
+const int CNIC_SECOND_DASH = 13;
 
 const int HAWL_DAYS = 354;
 const double ZAKAT_RATE = 0.025;
 const double NISAB_SILVER_GRAMS = 612.36;
 const double NISAB_GOLD_GRAMS = 87.48;
-const int MAX_LOGIN_TRIES = 3;
 const int MONTH_TOTAL_DAYS[13] = {0, 0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334};
 
 const char TYPE_SAVINGS[] = "savings";
@@ -40,14 +39,8 @@ const char TRANSACTION_FILE[] = "transactions.txt";
 const char USER_FILE[] = "users.txt";
 const char ZAKAT_FILE[] = "zakat.txt";
 
-int lengthOfText(const char text[]) {
-    int length = 0;
-    for (int i = 0; text[i] != '\0'; i++) {
-        length++;
-    }
-    return length;
-}
-
+// Owner: Saad Bin Asad (Group Leader)
+// Let's just get this working for now.
 void copyText(char destination[], const char source[], int maxSize) {
     int index = 0;
     for (index = 0; index < maxSize - 1 && source[index] != '\0'; index++) {
@@ -66,38 +59,18 @@ bool textsMatch(const char first[], const char second[]) {
     return first[index] == second[index];
 }
 
-bool isDigitCharacter(char symbol) {
-    if (symbol >= '0' && symbol <= '9') {
-        return true;
-    }
-    return false;
-}
-
-bool isDashPosition(int position) {
-    if (position == CNIC_FIRST_DASH || position == CNIC_SECOND_DASH) {
-        return true;
-    }
-    return false;
-}
-
 bool isValidCnicFormat(const char cnic[]) {
-    if (lengthOfText(cnic) != CNIC_LENGTH) {
-        return false;
-    }
-
     for (int position = 0; position < CNIC_LENGTH; position++) {
-        if (isDashPosition(position)) {
+        bool dashExpected = (position == CNIC_FIRST_DASH || position == CNIC_SECOND_DASH);
+        if (dashExpected) {
             if (cnic[position] != '-') {
                 return false;
             }
-        } else {
-            if (!isDigitCharacter(cnic[position])) {
-                return false;
-            }
+        } else if (cnic[position] < '0' || cnic[position] > '9') {
+            return false;
         }
     }
-
-    return true;
+    return cnic[CNIC_LENGTH] == '\0';
 }
 
 int hashText(const char text[]) {
@@ -108,10 +81,8 @@ int hashText(const char text[]) {
     return (int)hash;
 }
 
-void readText(char output[], int maxSize) {
-    cin.getline(output, maxSize);
-}
-
+// Owner: Saad Bin Asad (Group Leader)
+// Let's just get this working for now.
 int readInt() {
     int value = 0;
     cin >> value;
@@ -144,6 +115,561 @@ int readDate() {
         }
         cout << "Invalid date, try again" << endl;
     }
+}
+
+// Owner: Usama Ahsan
+// Let's just get this working for now.
+class Customer {
+public:
+    int id;
+    char name[NAME_SIZE];
+    char cnic[CNIC_SIZE];
+    char phone[PHONE_SIZE];
+    char address[ADDRESS_SIZE];
+
+    Customer(int newId = 0, const char newName[] = "", const char newCnic[] = "", const char newPhone[] = "", const char newAddress[] = "") {
+        id = newId;
+        copyText(name, newName, NAME_SIZE);
+        copyText(cnic, newCnic, CNIC_SIZE);
+        copyText(phone, newPhone, PHONE_SIZE);
+        copyText(address, newAddress, ADDRESS_SIZE);
+
+        if (newCnic[0] != '\0' && !isValidCnicFormat(cnic)) {
+            cout << "Warning: invalid CNIC for customer " << id << endl;
+        }
+    }
+};
+
+// Owner: Hassan Abdullah
+// Let's just get this working for now.
+class CustomerManager {
+public:
+    Customer list[MAX_CUSTOMERS];
+    int count = 0;
+
+    bool addCustomer(Customer newCustomer) {
+        if (count >= MAX_CUSTOMERS) {
+            cout << "Customer list is full" << endl;
+            return false;
+        }
+
+        if (findById(newCustomer.id) != -1) {
+            cout << "A customer with this id already exists" << endl;
+            return false;
+        }
+
+        list[count] = newCustomer;
+        count++;
+        return true;
+    }
+
+    int findById(int wantedId) const {
+        for (int index = 0; index < count; index++) {
+            if (list[index].id == wantedId) {
+                return index;
+            }
+        }
+        return -1;
+    }
+
+    bool removeCustomer(int wantedId) {
+        int foundIndex = findById(wantedId);
+        if (foundIndex == -1) {
+            return false;
+        }
+
+        for (int index = foundIndex; index < count - 1; index++) {
+            list[index] = list[index + 1];
+        }
+        count--;
+        return true;
+    }
+};
+
+// Owner: Mauz Ahmed Ghumman
+// Let's just get this working for now.
+class Account {
+public:
+    int accountNumber;
+    int ownerId;
+    char accountType[TYPE_SIZE];
+    double balance;
+    double overdraftLimit;
+    int hawlStartDay;
+
+    Account(int newNumber = 0, int newOwnerId = 0, const char newType[] = "", double startBalance = 0, double newLimit = 0, int startDay = 0) {
+        accountNumber = newNumber;
+        ownerId = newOwnerId;
+        copyText(accountType, newType, TYPE_SIZE);
+        balance = startBalance;
+        overdraftLimit = newLimit;
+        hawlStartDay = startDay;
+    }
+
+    bool isZakatEligible() const {
+        return textsMatch(accountType, TYPE_SAVINGS);
+    }
+
+    void deposit(double amount) {
+        if (amount <= 0) {
+            cout << "Deposit must be more than zero" << endl;
+            return;
+        }
+        balance = balance + amount;
+    }
+
+    bool withdraw(double amount) {
+        if (amount <= 0) {
+            cout << "Withdrawal must be more than zero" << endl;
+            return false;
+        }
+
+        if (balance - amount < -overdraftLimit) {
+            cout << "Not enough balance" << endl;
+            return false;
+        }
+
+        balance = balance - amount;
+        return true;
+    }
+};
+
+// Owner: Usman Nadeem
+// Let's just get this working for now.
+class AccountManager {
+public:
+    Account list[MAX_ACCOUNTS];
+    int count = 0;
+
+    int findByNumber(int wantedNumber) const {
+        for (int index = 0; index < count; index++) {
+            if (list[index].accountNumber == wantedNumber) {
+                return index;
+            }
+        }
+        return -1;
+    }
+
+    bool addAccount(Account newAccount) {
+        if (count >= MAX_ACCOUNTS) {
+            cout << "Account list is full" << endl;
+            return false;
+        }
+
+        if (findByNumber(newAccount.accountNumber) != -1) {
+            cout << "An account with this number already exists" << endl;
+            return false;
+        }
+
+        list[count] = newAccount;
+        count++;
+        return true;
+    }
+};
+
+// Owner: Abubakar
+// Let's just get this working for now.
+class Transaction {
+public:
+    int id;
+    char type[TYPE_SIZE];
+    double amount;
+    int day;
+    int sourceAccount;
+    int destinationAccount;
+
+    Transaction(int newId = 0, const char newType[] = "", double newAmount = 0, int newDay = 0, int newSource = -1, int newDestination = -1) {
+        id = newId;
+        copyText(type, newType, TYPE_SIZE);
+        amount = newAmount;
+        day = newDay;
+        sourceAccount = newSource;
+        destinationAccount = newDestination;
+    }
+};
+
+class TransactionLog {
+public:
+    Transaction list[MAX_TRANSACTIONS];
+    int count = 0;
+    int nextId = 1;
+
+    bool isFull() const {
+        return count >= MAX_TRANSACTIONS;
+    }
+
+    int nextTransactionId() {
+        int newId = nextId;
+        nextId++;
+        return newId;
+    }
+
+    bool record(Transaction newItem) {
+        if (isFull()) {
+            cout << "Transaction log is full" << endl;
+            return false;
+        }
+        list[count] = newItem;
+        count++;
+        return true;
+    }
+
+    void printHistory(int accountNumber) const {
+        bool found = false;
+        for (int index = 0; index < count; index++) {
+            if (list[index].sourceAccount == accountNumber || list[index].destinationAccount == accountNumber) {
+                cout << "#" << list[index].id << " " << list[index].type << " " << list[index].amount
+                     << " on day " << list[index].day << endl;
+                found = true;
+            }
+        }
+        if (!found) {
+            cout << "No transactions for this account" << endl;
+        }
+    }
+};
+
+// Owner: Abubakar
+// Let's just get this working for now.
+bool deposit(Account& account, double amount, TransactionLog& log, int today) {
+    if (log.isFull() || amount <= 0) {
+        return false;
+    }
+    account.deposit(amount);
+    Transaction item(log.nextTransactionId(), "deposit", amount, today, -1, account.accountNumber);
+    log.record(item);
+    return true;
+}
+
+bool withdraw(Account& account, double amount, TransactionLog& log, int today) {
+    if (log.isFull() || !account.withdraw(amount)) {
+        return false;
+    }
+    Transaction item(log.nextTransactionId(), "withdraw", amount, today, account.accountNumber, -1);
+    log.record(item);
+    return true;
+}
+
+bool transfer(Account& from, Account& to, double amount, TransactionLog& log, int today) {
+    if (log.isFull() || !from.withdraw(amount)) {
+        return false;
+    }
+    to.deposit(amount);
+    Transaction item(log.nextTransactionId(), "transfer", amount, today, from.accountNumber, to.accountNumber);
+    log.record(item);
+    return true;
+}
+
+// Owner: Abdulrehman
+// Let's just get this working for now.
+class User {
+public:
+    char username[USERNAME_SIZE];
+    int passwordHash;
+    char role[ROLE_SIZE];
+
+    User(const char newUsername[] = "", int newHash = 0, const char newRole[] = "") {
+        copyText(username, newUsername, USERNAME_SIZE);
+        passwordHash = newHash;
+        copyText(role, newRole, ROLE_SIZE);
+    }
+
+    bool isAdmin() const {
+        return textsMatch(role, ROLE_ADMIN);
+    }
+
+    bool isStaff() const {
+        return textsMatch(role, ROLE_STAFF);
+    }
+};
+
+// Owner: Muhammad Faizan
+// Let's just get this working for now.
+bool isStaffAction(const char action[]) {
+    return textsMatch(action, "view") || textsMatch(action, "create")
+        || textsMatch(action, "deposit") || textsMatch(action, "withdraw")
+        || textsMatch(action, "transfer");
+}
+
+class AuthManager {
+public:
+    User list[MAX_USERS];
+    int count = 0;
+
+    int findUser(const char wantedName[]) const {
+        for (int index = 0; index < count; index++) {
+            if (textsMatch(list[index].username, wantedName)) {
+                return index;
+            }
+        }
+        return -1;
+    }
+
+    bool addUser(User newUser) {
+        if (count >= MAX_USERS) {
+            cout << "User list is full" << endl;
+            return false;
+        }
+
+        if (findUser(newUser.username) != -1) {
+            cout << "That username already exists" << endl;
+            return false;
+        }
+
+        list[count] = newUser;
+        count++;
+        return true;
+    }
+
+    bool login(const char wantedName[], const char password[]) const {
+        int index = findUser(wantedName);
+        if (index == -1) {
+            return false;
+        }
+        return list[index].passwordHash == hashText(password);
+    }
+
+    bool hasPermission(const User& user, const char action[]) const {
+        if (user.isAdmin()) {
+            return true;
+        }
+        return user.isStaff() && isStaffAction(action);
+    }
+};
+
+// Owner: Farhan Abbass
+// Let's just get this working for now.
+struct ZakatSettings {
+    double silverPrice = 0;
+    double goldPrice = 0;
+    bool useSilver = true;
+};
+
+double nisabValue(double silverPrice, double goldPrice, bool useSilver) {
+    if (useSilver) {
+        return NISAB_SILVER_GRAMS * silverPrice;
+    }
+    return NISAB_GOLD_GRAMS * goldPrice;
+}
+
+double calculateZakat(double wealth, double nisab) {
+    if (wealth < nisab) {
+        return 0;
+    }
+    return wealth * ZAKAT_RATE;
+}
+
+// Owner: Sameer Baig
+// Let's just get this working for now.
+bool hawlComplete(int startDay, int todayDay) {
+    if (startDay == 0) {
+        return false;
+    }
+    return todayDay - startDay >= HAWL_DAYS;
+}
+
+bool canRunZakat(const AuthManager& auth, const User& user) {
+    return auth.hasPermission(user, "zakat");
+}
+
+bool canChangeNisab(const AuthManager& auth, const User& user) {
+    return auth.hasPermission(user, "change_nisab");
+}
+
+// Owner: Syed Faizan Haider
+// Let's just get this working for now.
+bool saveCustomers(const CustomerManager& customers) {
+    ofstream file(CUSTOMER_FILE);
+    if (!file) {
+        return false;
+    }
+
+    file << customers.count << endl;
+    for (int index = 0; index < customers.count; index++) {
+        const Customer& customer = customers.list[index];
+        file << customer.id << endl;
+        file << customer.name << endl;
+        file << customer.cnic << endl;
+        file << customer.phone << endl;
+        file << customer.address << endl;
+    }
+    return true;
+}
+
+bool loadCustomers(CustomerManager& customers) {
+    ifstream file(CUSTOMER_FILE);
+    if (!file) {
+        return false;
+    }
+
+    int total = 0;
+    file >> total;
+    file.ignore(1000, '\n');
+
+    for (int index = 0; index < total; index++) {
+        int id = 0;
+        char name[NAME_SIZE];
+        char cnic[CNIC_SIZE];
+        char phone[PHONE_SIZE];
+        char address[ADDRESS_SIZE];
+
+        file >> id;
+        file.ignore(1000, '\n');
+        file.getline(name, NAME_SIZE);
+        file.getline(cnic, CNIC_SIZE);
+        file.getline(phone, PHONE_SIZE);
+        file.getline(address, ADDRESS_SIZE);
+
+        customers.addCustomer(Customer(id, name, cnic, phone, address));
+    }
+    return true;
+}
+
+bool saveAccounts(const AccountManager& accounts) {
+    ofstream file(ACCOUNT_FILE);
+    if (!file) {
+        return false;
+    }
+
+    file.precision(15);
+    file << accounts.count << endl;
+    for (int index = 0; index < accounts.count; index++) {
+        const Account& account = accounts.list[index];
+        file << account.accountNumber << " " << account.ownerId << " " << account.accountType << " "
+             << account.balance << " " << account.overdraftLimit << " " << account.hawlStartDay << endl;
+    }
+    return true;
+}
+
+bool loadAccounts(AccountManager& accounts) {
+    ifstream file(ACCOUNT_FILE);
+    if (!file) {
+        return false;
+    }
+
+    int total = 0;
+    file >> total;
+
+    for (int index = 0; index < total; index++) {
+        int number = 0;
+        int ownerId = 0;
+        char type[TYPE_SIZE];
+        double balance = 0;
+        double limit = 0;
+        int startDay = 0;
+
+        file >> number >> ownerId >> type >> balance >> limit >> startDay;
+        accounts.addAccount(Account(number, ownerId, type, balance, limit, startDay));
+    }
+    return true;
+}
+
+// Owner: Syed Faizan Haider
+// Let's just get this working for now.
+bool saveTransactions(const TransactionLog& log) {
+    ofstream file(TRANSACTION_FILE);
+    if (!file) {
+        return false;
+    }
+
+    file.precision(15);
+    file << log.count << endl;
+    for (int index = 0; index < log.count; index++) {
+        const Transaction& item = log.list[index];
+        file << item.id << " " << item.type << " " << item.amount << " " << item.day << " "
+             << item.sourceAccount << " " << item.destinationAccount << endl;
+    }
+    return true;
+}
+
+bool loadTransactions(TransactionLog& log) {
+    ifstream file(TRANSACTION_FILE);
+    if (!file) {
+        return false;
+    }
+
+    int total = 0;
+    int highestId = 0;
+    file >> total;
+
+    for (int index = 0; index < total; index++) {
+        int id = 0;
+        char type[TYPE_SIZE];
+        double amount = 0;
+        int day = 0;
+        int source = 0;
+        int destination = 0;
+
+        file >> id >> type >> amount >> day >> source >> destination;
+        log.record(Transaction(id, type, amount, day, source, destination));
+        if (id > highestId) {
+            highestId = id;
+        }
+    }
+
+    log.nextId = highestId + 1;
+    return true;
+}
+
+bool saveUsers(const AuthManager& auth) {
+    ofstream file(USER_FILE);
+    if (!file) {
+        return false;
+    }
+
+    file << auth.count << endl;
+    for (int index = 0; index < auth.count; index++) {
+        const User& user = auth.list[index];
+        file << user.username << " " << user.passwordHash << " " << user.role << endl;
+    }
+    return true;
+}
+
+bool loadUsers(AuthManager& auth) {
+    ifstream file(USER_FILE);
+    if (!file) {
+        return false;
+    }
+
+    int total = 0;
+    file >> total;
+
+    for (int index = 0; index < total; index++) {
+        char name[USERNAME_SIZE];
+        int hash = 0;
+        char role[ROLE_SIZE];
+
+        file >> name >> hash >> role;
+        auth.addUser(User(name, hash, role));
+    }
+    return true;
+}
+
+bool saveZakatSettings(const ZakatSettings& settings) {
+    ofstream file(ZAKAT_FILE);
+    if (!file) {
+        return false;
+    }
+
+    file.precision(15);
+    int silverFlag = 0;
+    if (settings.useSilver) {
+        silverFlag = 1;
+    }
+    file << settings.silverPrice << " " << settings.goldPrice << " " << silverFlag << endl;
+    return true;
+}
+
+bool loadZakatSettings(ZakatSettings& settings) {
+    ifstream file(ZAKAT_FILE);
+    if (!file) {
+        return false;
+    }
+
+    int silverFlag = 0;
+    file >> settings.silverPrice >> settings.goldPrice >> silverFlag;
+    settings.useSilver = (silverFlag == 1);
+    return true;
 }
 
 // Owner: Saad Bin Asad (Group Leader)
@@ -180,13 +706,13 @@ void createCustomerMenu(CustomerManager& customers) {
     cout << "Customer id: ";
     int id = readInt();
     cout << "Name: ";
-    readText(name, NAME_SIZE);
+    cin.getline(name, NAME_SIZE);
     cout << "CNIC (12345-1234567-1): ";
-    readText(cnic, CNIC_SIZE);
+    cin.getline(cnic, CNIC_SIZE);
     cout << "Phone: ";
-    readText(phone, PHONE_SIZE);
+    cin.getline(phone, PHONE_SIZE);
     cout << "Address: ";
-    readText(address, ADDRESS_SIZE);
+    cin.getline(address, ADDRESS_SIZE);
 
     customers.addCustomer(Customer(id, name, cnic, phone, address));
 }
@@ -232,7 +758,7 @@ void depositMenu(AccountManager& accounts, TransactionLog& log, int today) {
     }
     cout << "Amount: ";
     double amount = readDouble();
-    deposit(accounts.accountAt(index), amount, log, today);
+    deposit(accounts.list[index], amount, log, today);
 }
 
 void withdrawMenu(AccountManager& accounts, TransactionLog& log, int today) {
@@ -244,9 +770,11 @@ void withdrawMenu(AccountManager& accounts, TransactionLog& log, int today) {
     }
     cout << "Amount: ";
     double amount = readDouble();
-    withdraw(accounts.accountAt(index), amount, log, today);
+    withdraw(accounts.list[index], amount, log, today);
 }
 
+// Owner: Saad Bin Asad (Group Leader)
+// Let's just get this working for now.
 void transferMenu(AccountManager& accounts, TransactionLog& log, int today) {
     cout << "From account number: ";
     int fromIndex = accounts.findByNumber(readInt());
@@ -259,7 +787,7 @@ void transferMenu(AccountManager& accounts, TransactionLog& log, int today) {
     }
     cout << "Amount: ";
     double amount = readDouble();
-    transfer(accounts.accountAt(fromIndex), accounts.accountAt(toIndex), amount, log, today);
+    transfer(accounts.list[fromIndex], accounts.list[toIndex], amount, log, today);
 }
 
 void historyMenu(const TransactionLog& log) {
@@ -272,21 +800,22 @@ void zakatMenu(const AccountManager& accounts, const ZakatSettings& settings, in
     cout << "Nisab threshold: " << nisab << endl;
 
     double totalDue = 0;
-    for (int index = 0; index < accounts.size(); index++) {
-        const Account& account = accounts.accountAt(index);
+    for (int index = 0; index < accounts.count; index++) {
+        const Account& account = accounts.list[index];
+        if (!account.isZakatEligible()) {
+            continue;
+        }
+        if (!hawlComplete(account.hawlStartDay, today)) {
+            cout << "Account " << account.accountNumber << " has not completed its hawl" << endl;
+            continue;
+        }
 
-        if (account.isZakatEligible()) {
-            if (hawlComplete(account.getHawlStartDay(), today)) {
-                ZakatResult result = calculateZakat(account.getBalance(), 0, nisab);
-                if (result.due) {
-                    cout << "Account " << account.getAccountNumber() << " zakat due: " << result.amount << endl;
-                    totalDue = totalDue + result.amount;
-                } else {
-                    cout << "Account " << account.getAccountNumber() << " is below nisab" << endl;
-                }
-            } else {
-                cout << "Account " << account.getAccountNumber() << " has not completed its hawl" << endl;
-            }
+        double due = calculateZakat(account.balance, nisab);
+        if (due > 0) {
+            cout << "Account " << account.accountNumber << " zakat due: " << due << endl;
+            totalDue = totalDue + due;
+        } else {
+            cout << "Account " << account.accountNumber << " is below nisab" << endl;
         }
     }
     cout << "Total zakat due: " << totalDue << endl;
@@ -306,9 +835,9 @@ void addUserMenu(AuthManager& auth) {
     char password[PASSWORD_SIZE];
 
     cout << "New username: ";
-    readText(name, USERNAME_SIZE);
+    cin.getline(name, USERNAME_SIZE);
     cout << "Password: ";
-    readText(password, PASSWORD_SIZE);
+    cin.getline(password, PASSWORD_SIZE);
     cout << "Role (1 = admin, 2 = staff): ";
     int roleChoice = readInt();
 
@@ -325,9 +854,6 @@ int main() {
     TransactionLog log;
     AuthManager auth;
     ZakatSettings settings;
-    settings.silverPrice = 0;
-    settings.goldPrice = 0;
-    settings.useSilver = true;
 
     loadCustomers(customers);
     loadAccounts(accounts);
@@ -335,7 +861,7 @@ int main() {
     loadUsers(auth);
     loadZakatSettings(settings);
 
-    if (auth.size() == 0) {
+    if (auth.count == 0) {
         cout << "No users found, creating default admin (admin / admin123)" << endl;
         auth.addUser(User("admin", hashText("admin123"), ROLE_ADMIN));
     }
@@ -345,9 +871,9 @@ int main() {
         char username[USERNAME_SIZE];
         char password[PASSWORD_SIZE];
         cout << "Username: ";
-        readText(username, USERNAME_SIZE);
+        cin.getline(username, USERNAME_SIZE);
         cout << "Password: ";
-        readText(password, PASSWORD_SIZE);
+        cin.getline(password, PASSWORD_SIZE);
 
         if (auth.login(username, password)) {
             loggedIndex = auth.findUser(username);
@@ -367,7 +893,7 @@ int main() {
     for (;;) {
         printMenu();
         int choice = readInt();
-        const User& currentUser = auth.userAt(loggedIndex);
+        const User& currentUser = auth.list[loggedIndex];
 
         if (choice == 1 && allowed(auth, currentUser, "create")) {
             createCustomerMenu(customers);
@@ -402,3 +928,4 @@ int main() {
 
     return 0;
 }
+
