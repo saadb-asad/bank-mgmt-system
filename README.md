@@ -28,21 +28,6 @@ The code is in one file on purpose. Each module has a banner section:
 | Zakat | Nisab check, hawl check, 2.5% calculation |
 | Main | Login loop, menu, module integration |
 
-## Requirements
-
-- A C++17 compiler, such as `g++` 7 or later, or `clang++`
-- No third-party libraries
-
-## Build and run
-
-    g++ -std=c++17 -Wall bank_system.cpp -o bank_system
-    ./bank_system
-
-On Windows with MinGW:
-
-    g++ -std=c++17 -Wall bank_system.cpp -o bank_system.exe
-    bank_system.exe
-
 ## Usage
 
 1. Log in with a valid username and password. You get three attempts.
@@ -74,22 +59,22 @@ Some rules are still being decided, so they may change:
 
 | Member | Area | Contribution
 |---|---|---|
-| [Saad Bin Asad](https://github.com/saadb-asad) (Team Lead) | Integration and main menu |
-| [Mauz Ahmed Ghumman](https://github.com/mauzghumman-lab) | Base Account class |
-| [Usman Nadeem](https://github.com/Usmannadeemm) | Savings and current accounts |
-| [Usama Ahsan](https://github.com/usamajutt05555-sketch) | Customer class and CNIC validation |
-| [Hassan Abdullah](https://github.com/hassanasif78223-ux) | Customer manager |
-| [Muhammad Abubakar](https://github.com/Malikabubakar8) | Transactions and money functions |
-| [Abdulrehman](https://github.com/ARawan007) | User class, login, password hashing |
-| [Muhammad Faizan](https://github.com/Faizan-lab856) | User store and permissions |
-| [Syed Faizan Haider](https://github.com/haiderig1214-eng) | File storage |
-| [Farhan Abbass](https://github.com/farhan4t6) | Zakat calculation |
-| Sameer Baig | Hawl tracking and zakat access |
+| [Saad Bin Asad](https://github.com/saadb-asad) (Team Lead) | Integration and main menu | Constants, text and input helpers, all menu functions, main()
+| [Mauz Ahmed Ghumman](https://github.com/mauzghumman-lab) | Base Account class | Account class, deposit, withdraw, isZakatEligible
+| [Usman Nadeem](https://github.com/Usmannadeemm) | Savings and current accounts | AccountManager class, findByNumber, addAccount
+| [Usama Ahsan](https://github.com/usamajutt05555-sketch) | Customer class and CNIC validation | Customer class, CNIC validation
+| [Hassan Abdullah](https://github.com/hassanasif78223-ux) | Customer manager | CustomerManager class, addCustomer, findById, removeCustomer
+| [Muhammad Abubakar](https://github.com/Malikabubakar8) | Transactions and money functions | Transaction and TransactionLog classes, deposit, withdraw, transfer
+| [Abdulrehman](https://github.com/ARawan007) | User class, login, password hashing | User class, admin and staff roles
+| [Muhammad Faizan](https://github.com/Faizan-lab856) | User store and permissions | AuthManager class, login, hasPermission, isStaffAction
+| [Syed Faizan Haider](https://github.com/haiderig1214-eng) | File storage | Save and load functions for customers, accounts, transactions, users, and zakat settings
+| [Farhan Abbass](https://github.com/farhan4t6) | Zakat calculation | ZakatSettings, nisabValue, calculateZakat
+| [Sameer Baig](https://github.com/sameerbosss47) | Hawl tracking and zakat access | hawlComplete, canRunZakat, canChangeNisab
 
 
 ## Contributing
 
-1. Pull the latest version of `bank_system.cpp`.
+1. Pull the latest version of `bank_mgmt.cpp`.
 2. Edit only your own banner section.
 3. Compile the whole file before pushing.
 
