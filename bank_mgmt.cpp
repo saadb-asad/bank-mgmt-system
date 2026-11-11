@@ -1,5 +1,7 @@
-// Owner: Saad Bin Asad (Group Leader)
-// Let's just get this working for now.
+// ----------------------------------------------------------------------------
+// Saad Bin Asad
+
+
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -39,8 +41,11 @@ const char TRANSACTION_FILE[] = "transactions.txt";
 const char USER_FILE[] = "users.txt";
 const char ZAKAT_FILE[] = "zakat.txt";
 
-// Owner: Saad Bin Asad (Group Leader)
-// Let's just get this working for now.
+
+// ----------------------------------------------------------------------------
+// Saad Bin Asad
+
+
 void copyText(char destination[], const char source[], int maxSize) {
     int index = 0;
     for (index = 0; index < maxSize - 1 && source[index] != '\0'; index++) {
@@ -81,8 +86,11 @@ int hashText(const char text[]) {
     return (int)hash;
 }
 
-// Owner: Saad Bin Asad (Group Leader)
-// Let's just get this working for now.
+
+// ----------------------------------------------------------------------------
+// Saad Bin Asad
+
+
 int readInt() {
     int value = 0;
     cin >> value;
@@ -117,8 +125,11 @@ int readDate() {
     }
 }
 
-// Owner: Usama Ahsan
-// Let's just get this working for now.
+
+// ----------------------------------------------------------------------------
+// Usama Ahsan
+
+
 class Customer {
 public:
     int id;
@@ -127,7 +138,15 @@ public:
     char phone[PHONE_SIZE];
     char address[ADDRESS_SIZE];
 
-    Customer(int newId = 0, const char newName[] = "", const char newCnic[] = "", const char newPhone[] = "", const char newAddress[] = "") {
+    Customer() {
+        id = 0;
+        name[0] = '\0';
+        cnic[0] = '\0';
+        phone[0] = '\0';
+        address[0] = '\0';
+    }
+
+    Customer(int newId, const char newName[], const char newCnic[], const char newPhone[], const char newAddress[]) {
         id = newId;
         copyText(name, newName, NAME_SIZE);
         copyText(cnic, newCnic, CNIC_SIZE);
@@ -140,12 +159,19 @@ public:
     }
 };
 
-// Owner: Hassan Abdullah
-// Let's just get this working for now.
+
+// ----------------------------------------------------------------------------
+// Hassan Abdullah
+
+
 class CustomerManager {
 public:
     Customer list[MAX_CUSTOMERS];
-    int count = 0;
+    int count;
+
+    CustomerManager() {
+        count = 0;
+    }
 
     bool addCustomer(Customer newCustomer) {
         if (count >= MAX_CUSTOMERS) {
@@ -186,8 +212,11 @@ public:
     }
 };
 
-// Owner: Mauz Ahmed Ghumman
-// Let's just get this working for now.
+
+// ----------------------------------------------------------------------------
+// Mauz Ahmed Ghumman
+
+
 class Account {
 public:
     int accountNumber;
@@ -197,7 +226,16 @@ public:
     double overdraftLimit;
     int hawlStartDay;
 
-    Account(int newNumber = 0, int newOwnerId = 0, const char newType[] = "", double startBalance = 0, double newLimit = 0, int startDay = 0) {
+    Account() {
+        accountNumber = 0;
+        ownerId = 0;
+        accountType[0] = '\0';
+        balance = 0;
+        overdraftLimit = 0;
+        hawlStartDay = 0;
+    }
+
+    Account(int newNumber, int newOwnerId, const char newType[], double startBalance, double newLimit, int startDay) {
         accountNumber = newNumber;
         ownerId = newOwnerId;
         copyText(accountType, newType, TYPE_SIZE);
@@ -234,12 +272,19 @@ public:
     }
 };
 
-// Owner: Usman Nadeem
-// Let's just get this working for now.
+
+// ----------------------------------------------------------------------------
+// Usman Nadeem
+
+
 class AccountManager {
 public:
     Account list[MAX_ACCOUNTS];
-    int count = 0;
+    int count;
+
+    AccountManager() {
+        count = 0;
+    }
 
     int findByNumber(int wantedNumber) const {
         for (int index = 0; index < count; index++) {
@@ -267,8 +312,11 @@ public:
     }
 };
 
-// Owner: Abubakar
-// Let's just get this working for now.
+
+// ----------------------------------------------------------------------------
+// Abubakar
+
+
 class Transaction {
 public:
     int id;
@@ -278,7 +326,16 @@ public:
     int sourceAccount;
     int destinationAccount;
 
-    Transaction(int newId = 0, const char newType[] = "", double newAmount = 0, int newDay = 0, int newSource = -1, int newDestination = -1) {
+    Transaction() {
+        id = 0;
+        type[0] = '\0';
+        amount = 0;
+        day = 0;
+        sourceAccount = -1;
+        destinationAccount = -1;
+    }
+
+    Transaction(int newId, const char newType[], double newAmount, int newDay, int newSource, int newDestination) {
         id = newId;
         copyText(type, newType, TYPE_SIZE);
         amount = newAmount;
@@ -291,8 +348,13 @@ public:
 class TransactionLog {
 public:
     Transaction list[MAX_TRANSACTIONS];
-    int count = 0;
-    int nextId = 1;
+    int count;
+    int nextId;
+
+    TransactionLog() {
+        count = 0;
+        nextId = 1;
+    }
 
     bool isFull() const {
         return count >= MAX_TRANSACTIONS;
@@ -329,8 +391,11 @@ public:
     }
 };
 
-// Owner: Abubakar
-// Let's just get this working for now.
+
+// ----------------------------------------------------------------------------
+// Abubakar
+
+
 bool deposit(Account& account, double amount, TransactionLog& log, int today) {
     if (log.isFull() || amount <= 0) {
         return false;
@@ -360,15 +425,24 @@ bool transfer(Account& from, Account& to, double amount, TransactionLog& log, in
     return true;
 }
 
-// Owner: Abdulrehman
-// Let's just get this working for now.
+
+// ----------------------------------------------------------------------------
+// Abdulrehman
+
+
 class User {
 public:
     char username[USERNAME_SIZE];
     int passwordHash;
     char role[ROLE_SIZE];
 
-    User(const char newUsername[] = "", int newHash = 0, const char newRole[] = "") {
+    User() {
+        username[0] = '\0';
+        passwordHash = 0;
+        role[0] = '\0';
+    }
+
+    User(const char newUsername[], int newHash, const char newRole[]) {
         copyText(username, newUsername, USERNAME_SIZE);
         passwordHash = newHash;
         copyText(role, newRole, ROLE_SIZE);
@@ -383,8 +457,11 @@ public:
     }
 };
 
-// Owner: Muhammad Faizan
-// Let's just get this working for now.
+
+// ----------------------------------------------------------------------------
+// Muhammad Faizan
+
+
 bool isStaffAction(const char action[]) {
     return textsMatch(action, "view") || textsMatch(action, "create")
         || textsMatch(action, "deposit") || textsMatch(action, "withdraw")
@@ -394,7 +471,11 @@ bool isStaffAction(const char action[]) {
 class AuthManager {
 public:
     User list[MAX_USERS];
-    int count = 0;
+    int count;
+
+    AuthManager() {
+        count = 0;
+    }
 
     int findUser(const char wantedName[]) const {
         for (int index = 0; index < count; index++) {
@@ -437,12 +518,15 @@ public:
     }
 };
 
-// Owner: Farhan Abbass
-// Let's just get this working for now.
+
+// ----------------------------------------------------------------------------
+// Farhan Abbass
+
+
 struct ZakatSettings {
-    double silverPrice = 0;
-    double goldPrice = 0;
-    bool useSilver = true;
+    double silverPrice;
+    double goldPrice;
+    bool useSilver;
 };
 
 double nisabValue(double silverPrice, double goldPrice, bool useSilver) {
@@ -459,8 +543,11 @@ double calculateZakat(double wealth, double nisab) {
     return wealth * ZAKAT_RATE;
 }
 
-// Owner: Sameer Baig
-// Let's just get this working for now.
+
+// ----------------------------------------------------------------------------
+// Sameer Baig
+
+
 bool hawlComplete(int startDay, int todayDay) {
     if (startDay == 0) {
         return false;
@@ -476,8 +563,11 @@ bool canChangeNisab(const AuthManager& auth, const User& user) {
     return auth.hasPermission(user, "change_nisab");
 }
 
-// Owner: Syed Faizan Haider
-// Let's just get this working for now.
+
+// ----------------------------------------------------------------------------
+// Syed Faizan Haider
+
+
 bool saveCustomers(const CustomerManager& customers) {
     ofstream file(CUSTOMER_FILE);
     if (!file) {
@@ -564,8 +654,11 @@ bool loadAccounts(AccountManager& accounts) {
     return true;
 }
 
-// Owner: Syed Faizan Haider
-// Let's just get this working for now.
+
+// ----------------------------------------------------------------------------
+// Syed Faizan Haider
+
+
 bool saveTransactions(const TransactionLog& log) {
     ofstream file(TRANSACTION_FILE);
     if (!file) {
@@ -672,8 +765,11 @@ bool loadZakatSettings(ZakatSettings& settings) {
     return true;
 }
 
-// Owner: Saad Bin Asad (Group Leader)
-// Let's just get this working for now.
+
+// ----------------------------------------------------------------------------
+// Saad Bin Asad
+
+
 void printMenu() {
     cout << endl;
     cout << "1. Create customer" << endl;
@@ -773,8 +869,11 @@ void withdrawMenu(AccountManager& accounts, TransactionLog& log, int today) {
     withdraw(accounts.list[index], amount, log, today);
 }
 
-// Owner: Saad Bin Asad (Group Leader)
-// Let's just get this working for now.
+
+// ----------------------------------------------------------------------------
+// Saad Bin Asad
+
+
 void transferMenu(AccountManager& accounts, TransactionLog& log, int today) {
     cout << "From account number: ";
     int fromIndex = accounts.findByNumber(readInt());
@@ -854,6 +953,9 @@ int main() {
     TransactionLog log;
     AuthManager auth;
     ZakatSettings settings;
+    settings.silverPrice = 0;
+    settings.goldPrice = 0;
+    settings.useSilver = true;
 
     loadCustomers(customers);
     loadAccounts(accounts);
@@ -928,4 +1030,3 @@ int main() {
 
     return 0;
 }
-
