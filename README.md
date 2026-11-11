@@ -1,3 +1,4 @@
+![Bank Management System banner](banner.png)
 # Bank Management System (C++)
 
 A console-based bank management system written in C++17 as a single file. Staff log in to manage customers and accounts, record deposits, withdrawals, and transfers, view transaction history, and calculate zakat on eligible balances.
