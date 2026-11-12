@@ -82,3 +82,7 @@ Some rules are still being decided, so they may change:
 ## Notes
 
 This is a student project. Passwords are hashed with a simple method that is not cryptographically secure, and the data files are plain text. **Do not use it to store real customer data**
+
+## Disclosure 
+
+Parts of this project were drafted with an AI assistant. The team reviewed, edited, and tested the code, and **every member is responsible for the sections they submitted**.
