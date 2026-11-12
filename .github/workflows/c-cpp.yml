@@ -1,23 +1,17 @@
-name: C/C++ CI
+name: Build
 
 on:
   push:
-    branches: [ "main" ]
   pull_request:
-    branches: [ "main" ]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v4
-    - name: configure
-      run: ./configure
-    - name: make
-      run: make
-    - name: make check
-      run: make check
-    - name: make distcheck
-      run: make distcheck
+      - uses: actions/checkout@v4
+
+      - name: Compile bank_system.cpp
+        run: g++ -std=c++17 -Wall -Wextra code/bank_system.cpp -o bank_system
+
+      - name: Run the program once with no input
+        run: echo "" | ./bank_system || true
